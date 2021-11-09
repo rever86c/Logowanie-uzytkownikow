@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1636487439 source:c:\users\rafal\desktop\programowanie\logowanie uzytkownikow\main.cpp
+	<iostream>
+	<windows.h>
+	<vector>
+

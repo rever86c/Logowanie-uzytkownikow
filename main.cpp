@@ -1,5 +1,6 @@
 #include <iostream>
 #include <windows.h>
+#include <vector>
 
 using namespace std;
 
@@ -9,19 +10,18 @@ struct Uzytkownik
     string nazwa, haslo;
 };
 
-int rejestracja(Uzytkownik uzytkownicy[], int iloscUzytkownikow)
+vector <Uzytkownik> rejestracja(vector <Uzytkownik> uzytkownicy)
 {
-    string nazwa, haslo;
+    Uzytkownik nowyUzytkownik;
     cout<<"Podaj nazwe uzytkownika: ";
-    cin>>nazwa;
-    //for(int i=0;  i<iloscUzytkownikow; i++)
+    cin>>nowyUzytkownik.nazwa;
     int i = 0;
-    while(i<iloscUzytkownikow)
+    while(i<uzytkownicy.size())
     {
-         if(uzytkownicy[i].nazwa == nazwa)
+         if(uzytkownicy[i].nazwa == nowyUzytkownik.nazwa)
          {
              cout << "Taki uzytkownik istnieje. Wpisz inna nazwe uzytkownika";
-             cin >> nazwa;
+             cin >> nowyUzytkownik.nazwa;
              i =0;
          }
          else
@@ -31,24 +31,30 @@ int rejestracja(Uzytkownik uzytkownicy[], int iloscUzytkownikow)
 
     }
     cout << "Podaj haslo: ";
-    cin >> haslo;
+    cin >> nowyUzytkownik.haslo;
 
-    uzytkownicy[iloscUzytkownikow].nazwa = nazwa;
-    uzytkownicy[iloscUzytkownikow].haslo = haslo;
-    uzytkownicy[iloscUzytkownikow].id = iloscUzytkownikow+1;
+    if(uzytkownicy.size()==0)
+    {
+        nowyUzytkownik.id =1;
+    }
+    else
+    {
+        nowyUzytkownik.id = uzytkownicy[uzytkownicy.size()-1].id+1;
+    }
+    uzytkownicy.push_back(nowyUzytkownik);
     cout<<"Konto zalozone"<<endl;
     Sleep(1000);
-    return iloscUzytkownikow+1;
+    return uzytkownicy;
 
 }
 
-int logowanie(Uzytkownik uzytkownicy[], int iloscUzytkownikow)
+int logowanie(vector <Uzytkownik> uzytkownicy)
 {
     string nazwa, haslo;
     cout<<"Podaj nazwe: ";
     cin>>nazwa;
     int i = 0;
-    while(i<iloscUzytkownikow)
+    while(i<uzytkownicy.size())
     {
          if(uzytkownicy[i].nazwa == nazwa)
          {
@@ -61,6 +67,7 @@ int logowanie(Uzytkownik uzytkownicy[], int iloscUzytkownikow)
                         cout<<"Zalogowales sie."<<endl;
                         Sleep(1000);
                         return uzytkownicy[i].id;
+
                     }
                 }
                 cout<<"Podales 3 razy bledne haslo. Poczekaj 3 sekundy przed kolejna proba"<<endl;
@@ -75,12 +82,12 @@ int logowanie(Uzytkownik uzytkownicy[], int iloscUzytkownikow)
     return 0;
 }
 
-void zmianaHasla(Uzytkownik uzytkownicy[], int iloscUzytkownikow, int idZalogowanegoUzytkownika)
+vector <Uzytkownik> zmianaHasla(vector <Uzytkownik> uzytkownicy, int idZalogowanegoUzytkownika)
 {
     string haslo;
     cout <<"Podaj nowe haslo: ";
     cin>>haslo;
-    for(int i = 0; i < iloscUzytkownikow; i++)
+    for(int i = 0; i < uzytkownicy.size(); i++)
     {
         if(uzytkownicy[i].id == idZalogowanegoUzytkownika)
         {
@@ -89,13 +96,14 @@ void zmianaHasla(Uzytkownik uzytkownicy[], int iloscUzytkownikow, int idZalogowa
             Sleep(1500);
         }
     }
+    return uzytkownicy;
 }
 
 int main()
 {
-    Uzytkownik uzytkownicy[100];
+    vector <Uzytkownik> uzytkownicy;
     int idZalogowanegoUzytkownika = 0;
-    int iloscUzytkownikow = 0;
+    //int iloscUzytkownikow = 0;
     char wybor;
 
     while(1)
@@ -110,11 +118,11 @@ int main()
 
             if(wybor == '1')
             {
-                iloscUzytkownikow = rejestracja(uzytkownicy,iloscUzytkownikow);
+                uzytkownicy = rejestracja(uzytkownicy);
             }
             else if(wybor == '2')
             {
-                idZalogowanegoUzytkownika = logowanie(uzytkownicy, iloscUzytkownikow);
+                idZalogowanegoUzytkownika = logowanie(uzytkownicy);
             }
             else if(wybor == '9')
             {
@@ -130,7 +138,7 @@ int main()
 
             if(wybor == '1')
             {
-                zmianaHasla(uzytkownicy, iloscUzytkownikow, idZalogowanegoUzytkownika);
+                uzytkownicy = zmianaHasla(uzytkownicy, idZalogowanegoUzytkownika);
             }
             else if(wybor == '2')
             {
