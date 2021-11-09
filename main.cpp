@@ -1,6 +1,8 @@
 #include <iostream>
 #include <windows.h>
 #include <vector>
+#include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -99,13 +101,74 @@ vector <Uzytkownik> zmianaHasla(vector <Uzytkownik> uzytkownicy, int idZalogowan
     return uzytkownicy;
 }
 
+void zapiszUzytkownikaWpliku(vector <Uzytkownik> uzytkownicy)
+{
+    fstream plikTekstowy;
+    plikTekstowy.open("Uzytkownicy.txt", ios::out);
+    if(plikTekstowy.good()==true)
+    {
+        for(int i =0; i<uzytkownicy.size(); i++)
+        {
+            plikTekstowy<<uzytkownicy[i].id<<"|";
+            plikTekstowy<<uzytkownicy[i].nazwa<<"|";
+            plikTekstowy<<uzytkownicy[i].haslo<<endl;
+        }
+        plikTekstowy.close();
+
+    }
+    else
+    {
+        cout<<"Nie mozna zapisac do pliku!"<<endl;
+        plikTekstowy.close();
+    }
+}
+
+Uzytkownik pobierzDaneZlinii(string liniaUzytkownika)
+{
+    Uzytkownik daneUzytkownika;
+
+    vector <string> rozdzieloneElementy;
+
+    stringstream pobierz(liniaUzytkownika);
+
+    string elementy;
+
+    while(getline(pobierz, elementy,'|'))
+    {
+        rozdzieloneElementy.push_back(elementy);
+    }
+
+    istringstream (rozdzieloneElementy[0]) >> daneUzytkownika.id;
+    daneUzytkownika.nazwa = rozdzieloneElementy[1];
+    daneUzytkownika.haslo =rozdzieloneElementy[2];
+
+    return daneUzytkownika;
+}
+
+vector <Uzytkownik> wczytajUzytkownikowZpliku()
+{
+    fstream listaUzytkownikow;
+    listaUzytkownikow.open("Uzytkownicy.txt", ios::in);
+    string liniaJednegoUzytkownika;
+    vector <Uzytkownik> odczytaniUzytkownicy;
+    if(listaUzytkownikow.good()==true)
+    {
+        while(getline(listaUzytkownikow,liniaJednegoUzytkownika))
+        {
+            odczytaniUzytkownicy.push_back(pobierzDaneZlinii(liniaJednegoUzytkownika));
+        }
+        listaUzytkownikow.close();
+    }
+    return odczytaniUzytkownicy;
+}
+
 int main()
 {
     vector <Uzytkownik> uzytkownicy;
     int idZalogowanegoUzytkownika = 0;
     //int iloscUzytkownikow = 0;
     char wybor;
-
+    uzytkownicy = wczytajUzytkownikowZpliku();
     while(1)
     {
         if(idZalogowanegoUzytkownika == 0)
@@ -126,6 +189,7 @@ int main()
             }
             else if(wybor == '9')
             {
+                zapiszUzytkownikaWpliku(uzytkownicy);
                 exit(0);
             }
         }
